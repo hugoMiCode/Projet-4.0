@@ -52,19 +52,15 @@ vector<string> Cryptage::chiffrement(string message, string clef)
 
 
     for (auto const x : message_finale)
-    {
         code += x;
-    }
 
     ofstream fichier{ "Donnee crypte.tkt" };
-    if (fichier)
-    {
+    if (fichier) {
         cout << "\nMessage crypté sauvegardé dans \"Donnee crypte.tkt\".";
         fichier << code;
     }
-    else {
+    else
         cout << "\nLe message crypté n'a pas été sauvegardé, échec d'ouverture de \"Donnee crypte.tkt\".";
-    }
     donne.push_back(code);
     donne.push_back(clef);
 
@@ -83,9 +79,7 @@ string Cryptage::dechiffrement(string message, string clef)
     string message_original{ "" };
 
     for (auto const x : message_finale)
-    {
         message_original += x;
-    }
 
     return message_original;
 }
@@ -97,17 +91,12 @@ vector<int> Cryptage::generation(vector<int>& clef, vector<int> const& message)
     unsigned int j{ 0 };
 
     while (message.size() < clef.size())
-    {
         clef.pop_back();
-    }
     if (message.size() >= clef.size())
-    {
-        for (unsigned int i{ 0 }; i < message.size(); i++)
-        {
+        for (unsigned int i{ 0 }; i < message.size(); i++) {
             message_crypte_chiffre.push_back(clef[j % clef.size()]);
             j++;
         }
-    }
 
     return message_crypte_chiffre;
 }
@@ -117,9 +106,7 @@ vector<int> Cryptage::transformation(vector<int> const& clef, vector<int> const&
     vector<int> message_chiffre{};
 
     for (unsigned int i{ 0 }; i < message.size(); i++)
-    {
-        message_chiffre.push_back((clef[i] + message[i]) % 70);
-    }
+        message_chiffre.push_back((clef[i] + message[i]) % 256); // 70
 
     return message_chiffre;
 }
@@ -129,16 +116,12 @@ vector<int> Cryptage::transformation_decryptage(vector<int> const& clef, vector<
     vector<int> message_chiffre{};
      
     for (unsigned int i{ 0 }; i < message.size(); i++)
-    {
-        if (message[i] - clef[i] <= 0)
-        {
-            int j{ (message[i] - clef[i]) + 70 };
+        if (message[i] - clef[i] <= 0) {
+            int j{ (message[i] - clef[i]) + 256 }; // 70
             message_chiffre.push_back(j);
         }
-        else {
+        else
             message_chiffre.push_back(message[i] - clef[i]);
-        }
-    }
     return message_chiffre;
 }
 

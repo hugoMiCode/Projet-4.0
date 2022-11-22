@@ -1,4 +1,6 @@
 #include "EntreeSecurisee.h"
+#include <iostream>
+#include <cstdlib>
 
 bool EntreeSecurisee::trueFalse()
 {
@@ -64,19 +66,22 @@ bool EntreeSecurisee::trueFalse()
 	return commande_able;
 }
 
-int EntreeSecurisee::integer(bool negatif)
+int EntreeSecurisee::integer(bool negatif, int limiteMin, int limiteMax)
 {
     int compteurEspace{ 0 };
     int compteurDigit{ 0 };
     int compteurSize{ 0 };
     int compteurNegatif{ 0 };
+    int compteurLimite{ 0 };
+    int moins{ 0 };
+
     string copie_entier{ "" };
-    bool commande_able{ false };
     bool estNegatif{ false };
 
-    do
+    while (true)
     {
         cin.clear();
+        //vider_buffer();
         getline(cin, copie_entier);
 
 
@@ -85,78 +90,200 @@ int EntreeSecurisee::integer(bool negatif)
         auto totale_espace = count(debut, fin, ' ');
 
 
-        if (totale_espace != 0)
-        {
+        if (totale_espace != 0) {
             compteurEspace++;
             if (compteurEspace == 1)
-            {
                 cout << "Ne rentrez pas d'espace, recommencez : ";
-            }
-            else {
+            else
                 cout << "Recommencez : ";
-            }
             continue;
         }
-        if (negatif)
-        {
-            if (copie_entier[0] == '-' && all_of(debut + 1, fin, isdigit))
-            {
+
+        if (negatif) {
+            if (copie_entier[0] == '-' && copie_entier.find_first_not_of("0987654321", 1) == string::npos) {
                 estNegatif = true;
-                copie_entier = { debut + 1, fin };
+                moins = 1;
+                string copie_entier = { debut + 1, fin };
                 debut = begin(copie_entier);
-                fin = end(copie_entier);
             }
         }
-        else if (copie_entier[0] == '-' && all_of(debut + 1, fin, isdigit))
+        else if (copie_entier[0] == '-' && copie_entier.find_first_not_of("0987654321", 1) == string::npos)
         {
             compteurNegatif++;
             if (compteurNegatif == 1)
-            {
-                cout << "Seuls les nombres positifs sont acceptés, recommencez : ";
-            }
-            else {
+                cout << "Seuls les nombres entiers positifs sont acceptés, recommencez : ";
+            else
                 cout << "Recommencez : ";
-            }
             continue;
         }
-        if (!(all_of(debut, fin, isdigit))) {
+        if (copie_entier.find_first_not_of("0987654321") != string::npos) {
 
             compteurDigit++;
             if (compteurDigit == 1)
-            {
-                cout << "Seuls les nombres sont acceptés, recommencez : ";
-            }
-            else {
+                cout << "Seuls les nombres entiers sont acceptés, recommencez : ";
+            else
                 cout << "Recommencez : ";
-            }
             continue;
         }
-        if(copie_entier.size() >= 10) {
 
-            compteurSize++;
-            if (compteurEspace == 1)
+        if (!estNegatif)
+            if (stoi(copie_entier) <= limiteMax && stoi(copie_entier) >= limiteMin)
+                return stoi(copie_entier);
+            else
             {
-                cout << "Seuls les nombres strictements inférieurs à 1 milliard sont acceptés, recommencez : ";
+                compteurLimite++;
+                if (compteurLimite == 1)
+                    cout << "Nombre hors definition, recommencez : ";
+                else
+                    cout << "Recommencez : ";
+                continue;
             }
-            else {
-                cout << "Recommencez : ";
+        else
+            if (-stoi(copie_entier) <= limiteMax && -stoi(copie_entier) >= limiteMin)
+                return -stoi(copie_entier);
+            else
+            {
+                compteurLimite++;
+                if (compteurLimite == 1)
+                    cout << "Nombre hors definition, recommencez : ";
+                else
+                    cout << "Recommencez : ";
+                continue;
             }
-            continue;
-        }
-        else {
-            commande_able = true;
-        }
-    } while (!commande_able);
-
-    if (estNegatif)
-    {
-        return -stoi(copie_entier);
-    }
-    else {
-        return stoi(copie_entier);
-
     }
 }
+
+
+void EntreeSecurisee::vider_buffer()
+{
+    cin.clear();
+    cin.seekg(0, ios::end);
+
+    if (!cin.fail())
+        cin.ignore(numeric_limits<streamsize>::max());
+    else
+        cin.clear();
+}
+
+vector<int> EntreeSecurisee::fraction(bool negatif)
+{
+    int compteurEspace{ 0 };
+    int compteurDigit{ 0 };
+    int compteurErreur{ 0 };
+    int compteurZero{ 0 };
+
+    vector<int> frac{};
+    bool estNegatif{ false };
+    string fraction{ "" };
+
+    while(true)
+    {
+        cin.clear();
+        getline(cin, fraction);
+
+
+        auto debut = begin(fraction);
+        auto fin = end(fraction);
+        auto barre_fraction = count(debut, fin, '/');
+        auto barre = find(debut, fin, '/');
+
+        string denominateur_S{ "" };
+        string numerateur_S{ "" };
+
+        if (barre_fraction != 0)
+        {            
+            numerateur_S = { debut, barre };
+            denominateur_S  = { barre + 1, fin };
+        }
+        else {
+            numerateur_S = { debut, fin };
+            denominateur_S = "1";
+        }
+
+
+        if (count(debut, fin, ' ') != 0)
+        {
+            compteurEspace++;
+            if (compteurEspace == 1)
+                cout << "Ne rentrez pas d'espace, recommencez : ";
+            else
+                cout << "Recommencez : ";
+
+            continue;
+        }
+        if (numerateur_S[0] == '-' || denominateur_S[0] == '-')
+        {
+            if (numerateur_S[0] == '-' && denominateur_S[0] == '-') {
+                estNegatif = false;
+                numerateur_S = { debut + 1, barre };
+                denominateur_S = { barre + 2, fin };
+            }
+            else if(numerateur_S[0] == '-') {
+                estNegatif = true;
+                numerateur_S = { debut + 1, barre };
+            }
+            else if (denominateur_S[0] == '-') {
+                estNegatif = true;
+                denominateur_S = { barre + 2, fin };
+            }
+        }
+
+        if (barre_fraction == 1)
+        {
+            if (numerateur_S.find_first_not_of("0987654321") != string::npos  || denominateur_S.find_first_not_of("0987654321") != string::npos || denominateur_S.empty() || numerateur_S.empty()) {
+
+                compteurDigit++;
+                if (compteurDigit == 1)
+                    cout << "Saisie incorrecte, recommencez : ";
+                else
+                    cout << "Recommencez : ";
+                continue;
+            }
+            else {
+                
+                if (stoi(denominateur_S) == 0)
+                {
+                    compteurZero++;
+                    if (compteurZero == 1)
+                        cout << "Erreur, division par zéro, recommencez : ";
+                    else
+                        cout << "Recommencez : ";
+                    continue;
+                }
+
+                if (estNegatif)
+                    frac.push_back(-stoi(numerateur_S));
+                else
+                    frac.push_back(stoi(numerateur_S));
+
+                frac.push_back(stoi(denominateur_S));
+
+                return frac;
+            }
+        }
+        else if (barre_fraction == 0 && numerateur_S.find_first_not_of("0987654321") == string::npos)
+        {
+            if (estNegatif)
+                frac.push_back(-stoi(numerateur_S));
+            else
+                frac.push_back(stoi(numerateur_S));
+            frac.push_back(1);
+
+            return frac;
+        }
+        else {
+
+            compteurErreur++;
+            if (compteurErreur == 1)
+                cout << "Seuls les nombres sont autorisés, recommencez : ";
+            else
+                cout << "Recommencez : ";
+
+            continue;
+        }
+    }
+}
+
 string EntreeSecurisee::validation2()
 {
     string message{ "" };
@@ -211,6 +338,12 @@ string EntreeSecurisee::validation2()
 vector<int> EntreeSecurisee::association(string const message)
 {
     vector<int> message_chiffre{};
+    //
+    for (auto const lettre : message) 
+        message_chiffre.push_back(int(lettre));
+    return message_chiffre;
+    //
+
 
     for (auto const lettre : message)
     {
@@ -505,6 +638,15 @@ vector<int> EntreeSecurisee::association(string const message)
 vector<char> EntreeSecurisee::finalisation(vector<int> const message)
 {
     vector<char> message_chiffre{};
+
+    //
+    for (auto const x : message)
+        message_chiffre.push_back(char(x));
+
+    return message_chiffre;
+    //
+
+
     for (auto const x : message)
     {
         switch (x) {
@@ -793,4 +935,26 @@ vector<char> EntreeSecurisee::finalisation(vector<int> const message)
     }
 
     return message_chiffre;
+}
+
+int EntreeSecurisee::pgcd(int a, int b)
+{
+    if (a < b)
+    {
+        int copie{ a };
+        a = b;
+        b = copie;
+    }
+
+    while (b != 0)
+    {
+        int t{ b };
+        b = a % b;
+        a = t;
+    }
+
+    if (a < 0) {
+        a = -a;
+    }
+    return a;
 }

@@ -17,8 +17,6 @@ public:
 	~Key();
 	string cassage(string message_decrypte, string message_crypte);
 	vector<int> subtitution(vector<int> message_decrypte, vector<int> message_crypte);
-	vector<char> finalisation(vector<int> clef_chiffre);
-
 private:
 
 };

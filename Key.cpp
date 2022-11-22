@@ -17,10 +17,8 @@ Key::Key()
 
 
         if (message_decrypte.size() != message_crypte.size())
-        {
             cout << "Les deux messages n'ont pas la même taille, impossible de trouver la clef de chiffrage.\n" << endl
                  << "Voulez vous rentrer d'autres messages ? (true/false) : ";
-        }
         else {
             string clef_cryptage = cassage(message_decrypte, message_crypte);
 
@@ -53,9 +51,7 @@ string Key::cassage(string message_decrypte, string message_crypte)
             for (unsigned int k{ 0 }; k < clef_de_decryptage.size() - clef.size(); k++)
             {
                 if ((k % clef.size()) == 0)
-                {
                     j = 0;
-                }
                 if (clef_de_decryptage[k + clef.size()] != clef[j])
                 {
                     valide = false;
@@ -64,16 +60,12 @@ string Key::cassage(string message_decrypte, string message_crypte)
                 j++;
             }
             if (valide)
-            {
                 return clef;
-            }
-            else {
+            else
                 clef += clef_de_decryptage[0];
-            }
         }
-        else {
+        else
             clef += clef_de_decryptage[i];
-        }
     }
 
 
@@ -86,15 +78,10 @@ vector<int> Key::subtitution(vector<int> message_decrypte, vector<int> message_c
     vector<int> clef_chiffre;
 
     for (unsigned int i{ 0 }; i < message_crypte.size(); i++)
-    {
         if ((message_crypte[i] - message_decrypte[i]) < 0)
-        {
             clef_chiffre.push_back(message_crypte[i] - message_decrypte[i] + 70);
-        }
-        else {
+        else
             clef_chiffre.push_back(message_crypte[i] - message_decrypte[i]);
-        }
-    }
 
     return clef_chiffre;
 }

@@ -1,3 +1,4 @@
+#pragma once
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -11,7 +12,7 @@
 #include <chrono>
 #include <string>
 #include "EntreeSecurisee.h"
-#pragma once
+
 class NombrePremier
 {
 public:
@@ -24,4 +25,5 @@ public:
 	vector<int> fichier(int n, string nom);
 	vector<int> listeDiviseurs(int n);
 };
+
 
